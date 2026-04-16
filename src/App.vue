@@ -44,8 +44,10 @@ import AppHeader from './components/AppHeader.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import AppFooter from './components/AppFooter.vue'
 import ToolDetailModal from './components/ToolDetailModal.vue'
+import { useAutoLocale } from './composables/useAutoLocale'
 
 const { locale } = useI18n()
+const { initAutoLocale } = useAutoLocale()
 const sidebarOpen = ref(false)
 const selectedTool = ref(null)
 const showBackToTop = ref(false)
@@ -62,11 +64,11 @@ function handleScroll() {
   showBackToTop.value = window.scrollY > 400
 }
 
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('scroll', handleScroll, { passive: true })
-  // 初始化语言
-  const savedLocale = localStorage.getItem('ai-nav-locale') || 'zh-CN'
-  locale.value = savedLocale
+  
+  // 初始化自动语言检测（根据IP判断国内/国外）
+  await initAutoLocale()
 })
 
 onUnmounted(() => {
