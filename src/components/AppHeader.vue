@@ -109,7 +109,7 @@
 
           <!-- Friend Link -->
           <a
-            href="https://aijiuming.com"
+            href="https://aijiuming.cn"
             target="_blank"
             rel="noopener noreferrer"
             class="hidden md:flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"

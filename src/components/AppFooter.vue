@@ -49,7 +49,7 @@
               </div>
               <div>
                 <p class="text-sm font-medium text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">aijiuming.com</p>
-                <p class="text-xs text-gray-400 dark:text-gray-500">在线工具站</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500">个人主页</p>
               </div>
             </a>
             <a
