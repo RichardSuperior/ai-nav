@@ -119,10 +119,16 @@ function subToolCount(id) {
 }
 
 // Reset when route changes
-watch(categoryId, () => {
+watch(categoryId, (newId) => {
   showRecommended.value = null
   if (category.value?.children) {
-    activeSubId.value = category.value.children[0]?.id || null
+    // Check if newId is a child category - use it directly
+    const isChildCategory = category.value.children.some(ch => ch.id === newId)
+    if (isChildCategory) {
+      activeSubId.value = newId
+    } else {
+      activeSubId.value = category.value.children[0]?.id || null
+    }
   } else {
     activeSubId.value = null
   }
