@@ -2,21 +2,21 @@
   <!-- Mobile overlay -->
   <div
     v-if="isOpen"
-    class="fixed inset-0 bg-black/40 z-30 lg:hidden"
+    class="fixed inset-0 bg-black/40 dark:bg-black/60 z-30 lg:hidden"
     @click="$emit('close')"
   ></div>
 
   <!-- Sidebar -->
   <aside
     :class="[
-      'fixed lg:sticky top-0 lg:top-16 left-0 h-screen lg:h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-100 flex flex-col z-40 transition-transform duration-300 lg:translate-x-0 overflow-hidden',
+      'fixed lg:sticky top-0 lg:top-16 left-0 h-screen lg:h-[calc(100vh-4rem)] w-64 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col z-40 transition-transform duration-300 lg:translate-x-0 overflow-hidden',
       isOpen ? 'translate-x-0' : '-translate-x-full'
     ]"
   >
     <!-- Sidebar header for mobile -->
-    <div class="lg:hidden flex items-center justify-between p-4 border-b border-gray-100">
-      <span class="font-semibold text-gray-800">工具分类</span>
-      <button @click="$emit('close')" class="p-1 rounded-lg hover:bg-gray-100 text-gray-500">
+    <div class="lg:hidden flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+      <span class="font-semibold text-gray-800 dark:text-white">工具分类</span>
+      <button @click="$emit('close')" class="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -26,7 +26,7 @@
     <!-- Nav list -->
     <nav class="flex-1 overflow-y-auto py-3 px-3">
       <div class="mb-2">
-        <p class="px-3 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">工具分类</p>
+        <p class="px-3 py-1 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">工具分类</p>
       </div>
       
       <div v-for="cat in categories" :key="cat.id">
@@ -39,8 +39,8 @@
           @click="$emit('close')"
         >
           <span class="text-base">{{ cat.emoji }}</span>
-          <span>{{ cat.name }}</span>
-          <span class="ml-auto text-xs text-gray-400">{{ toolCount(cat.id) }}</span>
+          <span class="text-gray-700 dark:text-gray-300">{{ cat.name }}</span>
+          <span class="ml-auto text-xs text-gray-400 dark:text-gray-500">{{ toolCount(cat.id) }}</span>
         </router-link>
 
         <!-- Category with children (expandable) -->
@@ -51,7 +51,7 @@
             @click="toggleExpand(cat.id)"
           >
             <span class="text-base">{{ cat.emoji }}</span>
-            <span>{{ cat.name }}</span>
+            <span class="text-gray-700 dark:text-gray-300">{{ cat.name }}</span>
             <svg
               class="w-4 h-4 ml-auto text-gray-400 transition-transform duration-200"
               :class="expanded.includes(cat.id) ? 'rotate-90' : ''"
@@ -75,8 +75,8 @@
               @click="$emit('close')"
             >
               <span class="w-1.5 h-1.5 rounded-full bg-current opacity-50"></span>
-              <span>{{ child.name }}</span>
-              <span class="ml-auto text-xs text-gray-400">{{ toolCount(child.id) }}</span>
+              <span class="text-gray-600 dark:text-gray-400">{{ child.name }}</span>
+              <span class="ml-auto text-xs text-gray-400 dark:text-gray-500">{{ toolCount(child.id) }}</span>
             </router-link>
           </div>
         </div>
@@ -84,13 +84,13 @@
     </nav>
 
     <!-- Sidebar footer - friendly links -->
-    <div class="border-t border-gray-100 p-4 space-y-2">
-      <p class="text-xs text-gray-400 font-medium mb-2">友情链接</p>
+    <div class="border-t border-gray-100 dark:border-gray-800 p-4 space-y-2">
+      <p class="text-xs text-gray-400 dark:text-gray-500 font-medium mb-2">友情链接</p>
       <a
         href="https://aijiuming.com"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center gap-2 text-sm text-gray-600 hover:text-indigo-600 transition-colors group"
+        class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors group"
       >
         <div class="w-6 h-6 rounded bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center flex-shrink-0">
           <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -103,7 +103,7 @@
         href="https://aijiuming.cn"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center gap-2 text-sm text-gray-600 hover:text-indigo-600 transition-colors group"
+        class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors group"
       >
         <div class="w-6 h-6 rounded bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center flex-shrink-0">
           <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">

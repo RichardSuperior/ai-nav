@@ -20,21 +20,21 @@
 
       <div class="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
         <!-- Badge -->
-        <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/80 text-xs px-3 py-1.5 rounded-full mb-6 font-medium">
+        <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/80 text-xs px-3 py-1.5 rounded-full mb-6 font-medium animate-fade-in">
           <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
           收录 600+ 优质 AI 工具
         </div>
 
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight animate-slide-up">
           发现 AI 世界的
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">无限可能</span>
         </h1>
-        <p class="text-lg text-white/60 mb-10 max-w-2xl mx-auto leading-relaxed">
+        <p class="text-lg text-white/60 mb-10 max-w-2xl mx-auto leading-relaxed animate-slide-up" style="animation-delay: 0.1s">
           精心整理全球优质 AI 工具，覆盖写作、编程、图像、视频、音频等 18+ 个专业领域，助您探索智能化工作方式。
         </p>
 
         <!-- Stats -->
-        <div class="flex items-center justify-center gap-8 text-white/60 text-sm">
+        <div class="flex items-center justify-center gap-8 text-white/60 text-sm animate-slide-up" style="animation-delay: 0.2s">
           <div class="text-center">
             <div class="text-2xl font-bold text-white">600+</div>
             <div class="text-xs mt-0.5">AI 工具</div>
@@ -60,12 +60,12 @@
           v-for="cat in mainCategories"
           :key="cat.id"
           :to="{ name: 'Category', params: { id: cat.id } }"
-          class="group flex flex-col items-center gap-2.5 bg-white rounded-xl p-4 border border-gray-100 hover:border-indigo-200 hover:shadow-card-hover transition-all duration-200 text-center"
+          class="group flex flex-col items-center gap-2.5 bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-600 hover:shadow-card-hover transition-all duration-200 text-center"
         >
           <div :class="['w-11 h-11 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110 duration-200', cat.bgColor]">
             {{ cat.emoji }}
           </div>
-          <span class="text-xs font-medium text-gray-700 group-hover:text-indigo-600 transition-colors leading-tight">{{ cat.name }}</span>
+          <span class="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-tight">{{ cat.name }}</span>
         </router-link>
       </div>
     </section>
@@ -75,12 +75,12 @@
       <div class="flex items-center justify-between mb-5">
         <div class="flex items-center gap-2">
           <span class="text-xl">🔥</span>
-          <h2 class="text-lg font-bold text-gray-900">热门工具</h2>
+          <h2 class="text-lg font-bold text-gray-900 dark:text-white">热门工具</h2>
           <span class="text-sm text-gray-400">精选推荐</span>
         </div>
         <router-link
           to="/category/hot"
-          class="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1"
+          class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1"
         >
           查看全部
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,6 +93,7 @@
           v-for="tool in hotTools"
           :key="tool.id"
           :tool="tool"
+          @open-detail="$emit('open-detail', $event)"
         />
       </div>
     </section>
@@ -107,11 +108,11 @@
         <div class="flex items-center justify-between mb-5">
           <div class="flex items-center gap-2">
             <span class="text-xl">{{ catGroup.emoji }}</span>
-            <h2 class="text-lg font-bold text-gray-900">{{ catGroup.name }}</h2>
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ catGroup.name }}</h2>
           </div>
           <router-link
             :to="{ name: 'Category', params: { id: catGroup.id } }"
-            class="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1"
+            class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1"
           >
             查看全部
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -124,6 +125,7 @@
             v-for="tool in catGroup.tools.slice(0, 8)"
             :key="tool.id"
             :tool="tool"
+            @open-detail="$emit('open-detail', $event)"
           />
         </div>
       </div>
@@ -135,6 +137,8 @@
 import { computed } from 'vue'
 import ToolCard from '../components/ToolCard.vue'
 import { categories, tools } from '../data/tools.js'
+
+defineEmits(['open-detail'])
 
 // Main categories for quick navigation
 const mainCategories = categories.filter(c => c.id !== 'hot')
@@ -170,3 +174,4 @@ const categoryGroups = computed(() => {
   return groups
 })
 </script>
+

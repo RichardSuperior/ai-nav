@@ -1,12 +1,12 @@
 <template>
   <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 py-6">
     <!-- Breadcrumb -->
-    <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
-      <router-link to="/" class="hover:text-indigo-600 transition-colors">首页</router-link>
-      <svg class="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
+      <router-link to="/" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">首页</router-link>
+      <svg class="w-4 h-4 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
-      <span class="text-gray-900 font-medium">{{ category?.name || '工具列表' }}</span>
+      <span class="text-gray-900 dark:text-white font-medium">{{ category?.name || '工具列表' }}</span>
     </div>
 
     <!-- Category header -->
@@ -15,8 +15,8 @@
         {{ category.emoji }}
       </div>
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">{{ category.name }}</h1>
-        <p class="text-sm text-gray-500 mt-0.5">共收录 {{ currentTools.length }} 个工具</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ category.name }}</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">共收录 {{ currentTools.length }} 个工具</p>
       </div>
     </div>
 
@@ -29,7 +29,7 @@
           'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
           activeSubId === child.id
             ? 'bg-indigo-600 text-white shadow-sm'
-            : 'bg-white text-gray-600 border border-gray-200 hover:border-indigo-300 hover:text-indigo-600'
+            : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-indigo-300 hover:text-indigo-600 dark:hover:text-indigo-400'
         ]"
         @click="setActiveSubId(child.id)"
       >
@@ -41,16 +41,16 @@
     <!-- Filter bar -->
     <div class="flex items-center gap-3 mb-6">
       <button
-        :class="['tag transition-colors', showRecommended === null ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50']"
+        :class="['tag transition-colors', showRecommended === null ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750']"
         @click="showRecommended = null"
       >全部</button>
       <button
-        :class="['tag transition-colors', showRecommended === true ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50']"
+        :class="['tag transition-colors', showRecommended === true ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750']"
         @click="showRecommended = true"
       >
         ⭐ 推荐
       </button>
-      <div class="ml-auto text-sm text-gray-400">{{ filteredTools.length }} 个工具</div>
+      <div class="ml-auto text-sm text-gray-400 dark:text-gray-500">{{ filteredTools.length }} 个工具</div>
     </div>
 
     <!-- Tools grid -->
@@ -59,14 +59,15 @@
         v-for="tool in filteredTools"
         :key="tool.id"
         :tool="tool"
+        @open-detail="$emit('open-detail', $event)"
       />
     </div>
 
     <!-- Empty state -->
     <div v-else class="text-center py-20">
       <div class="text-5xl mb-4">🤖</div>
-      <h3 class="text-lg font-semibold text-gray-700 mb-2">暂无工具</h3>
-      <p class="text-gray-400 text-sm">该分类下暂时没有收录工具，敬请期待</p>
+      <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">暂无工具</h3>
+      <p class="text-gray-400 dark:text-gray-500 text-sm">该分类下暂时没有收录工具，敬请期待</p>
     </div>
   </div>
 </template>
@@ -76,6 +77,8 @@ import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import ToolCard from '../components/ToolCard.vue'
 import { categories, tools } from '../data/tools.js'
+
+defineEmits(['open-detail'])
 
 const route = useRoute()
 const showRecommended = ref(null)
@@ -89,16 +92,6 @@ const category = computed(() => {
     if (c.children) return c.children.some(ch => ch.id === categoryId.value)
     return false
   }) || null
-})
-
-// If the route id is a sub-category, find parent
-const isSubCategory = computed(() => {
-  for (const cat of categories) {
-    if (cat.children && cat.children.some(c => c.id === categoryId.value)) {
-      return true
-    }
-  }
-  return false
 })
 
 const currentTools = computed(() => {

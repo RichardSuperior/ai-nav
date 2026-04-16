@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
+  <header class="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 shadow-sm transition-colors">
     <div class="max-w-screen-2xl mx-auto px-4 sm:px-6">
       <div class="flex items-center h-16 gap-4">
         <!-- Logo -->
@@ -10,7 +10,7 @@
             </svg>
           </div>
           <div class="flex flex-col">
-            <span class="font-bold text-gray-900 text-base leading-tight">AI 导航</span>
+            <span class="font-bold text-gray-900 dark:text-white text-base leading-tight">AI 导航</span>
             <span class="text-xs text-gray-400 leading-tight hidden sm:block">发现AI世界的无限可能</span>
           </div>
         </router-link>
@@ -27,7 +27,7 @@
               v-model="searchQuery"
               type="text"
               placeholder="搜索 AI 工具..."
-              class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 focus:bg-white transition-all placeholder:text-gray-400"
+              class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 focus:bg-white dark:focus:bg-gray-750 dark:text-white transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
               @input="onSearch"
               @keyup.enter="goSearch"
               @focus="isFocused = true"
@@ -36,7 +36,7 @@
             <button
               v-if="searchQuery"
               @click="clearSearch"
-              class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600"
+              class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -45,54 +45,100 @@
           </div>
 
           <!-- Search Dropdown -->
-          <div
-            v-if="isFocused && searchResults.length > 0"
-            class="absolute top-full mt-2 left-0 right-0 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
-          >
-            <div class="p-2 max-h-80 overflow-y-auto">
-              <p class="px-3 py-1 text-xs text-gray-400 font-medium">搜索结果</p>
-              <router-link
-                v-for="tool in searchResults.slice(0, 8)"
-                :key="tool.id"
-                :to="{ name: 'Category', params: { id: tool.categoryId } }"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
-                @click="clearSearch"
-              >
-                <div :class="['w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold flex-shrink-0', getToolColor(tool.name)]">
-                  {{ tool.name.charAt(0) }}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium text-gray-900 truncate">{{ tool.name }}</p>
-                  <p class="text-xs text-gray-500 truncate">{{ tool.desc }}</p>
-                </div>
-              </router-link>
+          <transition name="fade">
+            <div
+              v-if="isFocused && searchResults.length > 0"
+              class="absolute top-full mt-2 left-0 right-0 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50"
+            >
+              <div class="p-2 max-h-80 overflow-y-auto">
+                <p class="px-3 py-1 text-xs text-gray-400 dark:text-gray-500 font-medium">搜索结果</p>
+                <router-link
+                  v-for="tool in searchResults.slice(0, 8)"
+                  :key="tool.id"
+                  :to="{ name: 'Category', params: { id: tool.categoryId } }"
+                  class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  @click="clearSearch"
+                >
+                  <!-- Tool Icon: logo or fallback gradient -->
+                  <div class="w-8 h-8 rounded-lg flex-shrink-0 overflow-hidden">
+                    <img
+                      v-if="tool.logo"
+                      :src="tool.logo"
+                      :alt="tool.name"
+                      class="w-full h-full object-cover"
+                      @error="e => e.target.style.display='none'"
+                    />
+                    <div
+                      v-else
+                      :class="['w-full h-full flex items-center justify-center text-white text-sm font-bold', getToolColor(tool.name)]"
+                    >
+                      {{ tool.name.charAt(0) }}
+                    </div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ tool.name }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ tool.desc }}</p>
+                  </div>
+                  <span v-if="tool.recommended" class="text-xs text-indigo-500 font-medium flex-shrink-0">推荐</span>
+                </router-link>
+              </div>
+              <div class="border-t border-gray-100 dark:border-gray-700 p-2">
+                <button
+                  @click="goSearch"
+                  class="w-full text-center text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 py-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
+                >
+                  查看全部 "{{ searchQuery }}" 的搜索结果
+                </button>
+              </div>
             </div>
-            <div class="border-t border-gray-100 p-2">
-              <button
-                @click="goSearch"
-                class="w-full text-center text-sm text-indigo-600 hover:text-indigo-700 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors"
-              >
-                查看全部 "{{ searchQuery }}" 的搜索结果
-              </button>
-            </div>
-          </div>
+          </transition>
         </div>
 
         <!-- Nav Actions -->
-        <div class="flex items-center gap-2 flex-shrink-0">
+        <div class="flex items-center gap-1 flex-shrink-0">
+          <!-- Submit Tool Button -->
+          <a
+            href="mailto:submit@aijiuming.com?subject=推荐AI工具"
+            class="hidden lg:flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors font-medium"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            提交工具
+          </a>
+
+          <!-- Friend Link -->
           <a
             href="https://aijiuming.com"
             target="_blank"
             rel="noopener noreferrer"
-            class="hidden md:flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+            class="hidden md:flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
           >
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
             工具站
           </a>
+
+          <!-- Dark Mode Toggle -->
           <button
-            class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
+            @click="toggleDark"
+            class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            :title="isDark ? '切换浅色模式' : '切换深色模式'"
+          >
+            <!-- Sun icon (dark mode) -->
+            <svg v-if="isDark" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <!-- Moon icon (light mode) -->
+            <svg v-else class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </button>
+
+          <!-- Mobile menu button -->
+          <button
+            class="md:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             @click="$emit('toggle-sidebar')"
           >
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -109,11 +155,14 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { searchTools, getToolColor } from '../data/tools.js'
+import { useDarkMode } from '../composables/useDarkMode.js'
 
 const router = useRouter()
 const searchQuery = ref('')
 const searchResults = ref([])
 const isFocused = ref(false)
+
+const { isDark, toggle: toggleDark } = useDarkMode()
 
 function onSearch() {
   if (searchQuery.value.trim()) {
