@@ -39,11 +39,13 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AppHeader from './components/AppHeader.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import AppFooter from './components/AppFooter.vue'
 import ToolDetailModal from './components/ToolDetailModal.vue'
 
+const { locale } = useI18n()
 const sidebarOpen = ref(false)
 const selectedTool = ref(null)
 const showBackToTop = ref(false)
@@ -62,6 +64,9 @@ function handleScroll() {
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true })
+  // 初始化语言
+  const savedLocale = localStorage.getItem('ai-nav-locale') || 'zh-CN'
+  locale.value = savedLocale
 })
 
 onUnmounted(() => {

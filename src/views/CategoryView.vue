@@ -2,11 +2,11 @@
   <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 py-6">
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
-      <router-link to="/" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">首页</router-link>
+      <router-link to="/" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{{ $t('header.home') }}</router-link>
       <svg class="w-4 h-4 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
-      <span class="text-gray-900 dark:text-white font-medium">{{ category?.name || '工具列表' }}</span>
+      <span class="text-gray-900 dark:text-white font-medium">{{ categoryName }}</span>
     </div>
 
     <!-- Category header -->
@@ -15,8 +15,8 @@
         {{ category.emoji }}
       </div>
       <div>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ category.name }}</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">共收录 {{ currentTools.length }} 个工具</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ categoryName }}</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ currentTools.length }}{{ $t('category.toolsCount') }}</p>
       </div>
     </div>
 
@@ -33,7 +33,7 @@
         ]"
         @click="setActiveSubId(child.id)"
       >
-        {{ child.name }}
+        {{ isZh ? child.name : child.nameEn }}
         <span class="ml-1.5 text-xs opacity-70">({{ subToolCount(child.id) }})</span>
       </button>
     </div>
@@ -43,14 +43,14 @@
       <button
         :class="['tag transition-colors', showRecommended === null ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750']"
         @click="showRecommended = null"
-      >全部</button>
+      >{{ $t('category.allTools') }}</button>
       <button
         :class="['tag transition-colors', showRecommended === true ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750']"
         @click="showRecommended = true"
       >
-        ⭐ 推荐
+        ⭐ {{ $t('category.recommended') }}
       </button>
-      <div class="ml-auto text-sm text-gray-400 dark:text-gray-500">{{ filteredTools.length }} 个工具</div>
+      <div class="ml-auto text-sm text-gray-400 dark:text-gray-500">{{ filteredTools.length }}{{ $t('category.toolsCount') }}</div>
     </div>
 
     <!-- Tools grid -->
@@ -66,8 +66,8 @@
     <!-- Empty state -->
     <div v-else class="text-center py-20">
       <div class="text-5xl mb-4">🤖</div>
-      <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">暂无工具</h3>
-      <p class="text-gray-400 dark:text-gray-500 text-sm">该分类下暂时没有收录工具，敬请期待</p>
+      <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ $t('search.noResults') }}</h3>
+      <p class="text-gray-400 dark:text-gray-500 text-sm">{{ $t('search.noResultsHint') }}</p>
     </div>
   </div>
 </template>
@@ -75,14 +75,18 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import ToolCard from '../components/ToolCard.vue'
 import { categories, tools } from '../data/tools.js'
 
 defineEmits(['open-detail'])
 
 const route = useRoute()
+const { locale } = useI18n()
 const showRecommended = ref(null)
 const activeSubId = ref(null)
+
+const isZh = computed(() => locale.value === 'zh-CN')
 
 const categoryId = computed(() => route.params.id)
 
@@ -92,6 +96,17 @@ const category = computed(() => {
     if (c.children) return c.children.some(ch => ch.id === categoryId.value)
     return false
   }) || null
+})
+
+// Category name based on language
+const categoryName = computed(() => {
+  if (!category.value) return 'Tools'
+  // Check if current route is a child category
+  const child = category.value.children?.find(c => c.id === categoryId.value)
+  if (child) {
+    return isZh.value ? child.name : child.nameEn
+  }
+  return isZh.value ? category.value.name : category.value.nameEn
 })
 
 const currentTools = computed(() => {

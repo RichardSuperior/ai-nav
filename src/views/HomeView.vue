@@ -22,32 +22,31 @@
         <!-- Badge -->
         <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/80 text-xs px-3 py-1.5 rounded-full mb-6 font-medium animate-fade-in">
           <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
-          收录 600+ 优质 AI 工具
+          {{ isZh ? '收录 600+ 优质 AI 工具' : '600+ Premium AI Tools' }}
         </div>
 
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight animate-slide-up">
-          发现 AI 世界的
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">无限可能</span>
+          {{ $t('home.hero.title') }}
         </h1>
         <p class="text-lg text-white/60 mb-10 max-w-2xl mx-auto leading-relaxed animate-slide-up" style="animation-delay: 0.1s">
-          精心整理全球优质 AI 工具，覆盖写作、编程、图像、视频、音频等 18+ 个专业领域，助您探索智能化工作方式。
+          {{ $t('home.hero.subtitle') }}
         </p>
 
         <!-- Stats -->
         <div class="flex items-center justify-center gap-8 text-white/60 text-sm animate-slide-up" style="animation-delay: 0.2s">
           <div class="text-center">
             <div class="text-2xl font-bold text-white">600+</div>
-            <div class="text-xs mt-0.5">AI 工具</div>
+            <div class="text-xs mt-0.5">{{ isZh ? 'AI 工具' : 'AI Tools' }}</div>
           </div>
           <div class="w-px h-8 bg-white/20"></div>
           <div class="text-center">
             <div class="text-2xl font-bold text-white">18+</div>
-            <div class="text-xs mt-0.5">工具分类</div>
+            <div class="text-xs mt-0.5">{{ isZh ? '工具分类' : 'Categories' }}</div>
           </div>
           <div class="w-px h-8 bg-white/20"></div>
           <div class="text-center">
-            <div class="text-2xl font-bold text-white">每日</div>
-            <div class="text-xs mt-0.5">持续更新</div>
+            <div class="text-2xl font-bold text-white">{{ isZh ? '每日' : 'Daily' }}</div>
+            <div class="text-xs mt-0.5">{{ isZh ? '持续更新' : 'Updates' }}</div>
           </div>
         </div>
       </div>
@@ -65,7 +64,7 @@
           <div :class="['w-11 h-11 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110 duration-200', cat.bgColor]">
             {{ cat.emoji }}
           </div>
-          <span class="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-tight">{{ cat.name }}</span>
+          <span class="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-tight">{{ isZh ? cat.name : cat.nameEn }}</span>
         </router-link>
       </div>
     </section>
@@ -75,14 +74,14 @@
       <div class="flex items-center justify-between mb-5">
         <div class="flex items-center gap-2">
           <span class="text-xl">🔥</span>
-          <h2 class="text-lg font-bold text-gray-900 dark:text-white">热门工具</h2>
-          <span class="text-sm text-gray-400">精选推荐</span>
+          <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ $t('header.trending') }}</h2>
+          <span class="text-sm text-gray-400">{{ $t('category.recommended') }}</span>
         </div>
         <router-link
           to="/category/hot"
           class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1"
         >
-          查看全部
+          {{ $t('home.categories.viewAll') }}
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
@@ -108,13 +107,13 @@
         <div class="flex items-center justify-between mb-5">
           <div class="flex items-center gap-2">
             <span class="text-xl">{{ catGroup.emoji }}</span>
-            <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ catGroup.name }}</h2>
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ isZh ? catGroup.name : catGroup.nameEn }}</h2>
           </div>
           <router-link
             :to="{ name: 'Category', params: { id: catGroup.id } }"
             class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1"
           >
-            查看全部
+            {{ $t('home.categories.viewAll') }}
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
@@ -135,10 +134,14 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ToolCard from '../components/ToolCard.vue'
 import { categories, tools } from '../data/tools.js'
 
 defineEmits(['open-detail'])
+
+const { locale } = useI18n()
+const isZh = computed(() => locale.value === 'zh-CN')
 
 // Main categories for quick navigation
 const mainCategories = categories.filter(c => c.id !== 'hot')

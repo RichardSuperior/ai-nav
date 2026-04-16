@@ -47,10 +47,10 @@
                 <div class="flex-1 min-w-0 pt-1">
                   <div class="flex items-center gap-2 flex-wrap">
                     <h2 class="text-xl font-bold text-white">{{ tool.name }}</h2>
-                    <span v-if="tool.recommended" class="text-xs bg-yellow-400 text-yellow-900 px-2 py-0.5 rounded-full font-bold">推荐</span>
-                    <span v-if="tool.free" class="text-xs bg-green-400 text-green-900 px-2 py-0.5 rounded-full font-bold">免费</span>
+                    <span v-if="tool.recommended" class="text-xs bg-yellow-400 text-yellow-900 px-2 py-0.5 rounded-full font-bold">{{ $t('category.recommended') }}</span>
+                    <span v-if="tool.free" class="text-xs bg-green-400 text-green-900 px-2 py-0.5 rounded-full font-bold">{{ $t('tool.free') }}</span>
                   </div>
-                  <p class="text-white/70 text-sm mt-1 line-clamp-2">{{ tool.desc }}</p>
+                  <p class="text-white/70 text-sm mt-1 line-clamp-2">{{ displayDesc }}</p>
                 </div>
               </div>
             </div>
@@ -68,7 +68,7 @@
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
-                立即访问 {{ tool.name }}
+                {{ $t('tool.visit') }} {{ tool.name }}
               </a>
             </div>
 
@@ -76,18 +76,18 @@
             <div class="px-6 py-5 space-y-4">
               <!-- Description -->
               <div>
-                <h3 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-2">工具介绍</h3>
+                <h3 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-2">{{ $t('tool.details') }}</h3>
                 <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {{ tool.detail || tool.desc }}
+                  {{ displayDetail }}
                 </p>
               </div>
 
               <!-- Tags -->
-              <div v-if="tool.tags?.length">
-                <h3 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-2">标签</h3>
+              <div v-if="displayTags.length">
+                <h3 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-2">{{ $t('tool.tags') }}</h3>
                 <div class="flex gap-2 flex-wrap">
                   <span
-                    v-for="tag in tool.tags"
+                    v-for="tag in displayTags"
                     :key="tag"
                     class="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-2.5 py-1 rounded-lg font-medium"
                   >
@@ -98,7 +98,7 @@
 
               <!-- URL preview -->
               <div v-if="tool.url && tool.url !== '#'">
-                <h3 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-2">网址</h3>
+                <h3 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-2">URL</h3>
                 <a
                   :href="tool.url"
                   target="_blank"
@@ -112,12 +112,12 @@
 
             <!-- Footer -->
             <div class="px-6 pb-5 flex items-center justify-between">
-              <span class="text-xs text-gray-400 dark:text-gray-500">数据来源：AI 导航站</span>
+              <span class="text-xs text-gray-400 dark:text-gray-500">AI Nav</span>
               <button
                 @click="$emit('close')"
                 class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-medium"
               >
-                关闭
+                Close
               </button>
             </div>
           </div>
@@ -129,6 +129,7 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { getToolColor } from '../data/tools.js'
 
 const props = defineProps({
@@ -137,8 +138,31 @@ const props = defineProps({
 
 defineEmits(['close'])
 
+const { locale } = useI18n()
+
 const logoError = ref(false)
 const colorClass = computed(() => props.tool ? getToolColor(props.tool.name) : '')
+
+// 根据语言获取描述
+const displayDesc = computed(() => {
+  if (!props.tool) return ''
+  const isZh = locale.value === 'zh-CN'
+  return isZh ? props.tool.desc : (props.tool.descEn || props.tool.desc)
+})
+
+// 根据语言获取详情
+const displayDetail = computed(() => {
+  if (!props.tool) return ''
+  const isZh = locale.value === 'zh-CN'
+  return isZh ? (props.tool.detail || props.tool.desc) : (props.tool.detailEn || props.tool.descEn || props.tool.desc)
+})
+
+// 根据语言获取标签
+const displayTags = computed(() => {
+  if (!props.tool) return []
+  const isZh = locale.value === 'zh-CN'
+  return isZh ? (props.tool.tags || []) : (props.tool.tagsEn || props.tool.tags || [])
+})
 
 // Reset logo error when tool changes
 watch(() => props.tool, () => {

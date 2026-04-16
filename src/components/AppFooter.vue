@@ -10,16 +10,16 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2" />
               </svg>
             </div>
-            <span class="font-bold text-gray-900 dark:text-white">AI 导航</span>
+            <span class="font-bold text-gray-900 dark:text-white">AI Nav</span>
           </div>
           <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-            发现AI世界的无限可能。精心整理全球优质AI工具，帮助您快速找到适合的人工智能解决方案。
+            {{ $t('footer.description') }}
           </p>
         </div>
 
         <!-- Quick links -->
         <div>
-          <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">快速导航</h4>
+          <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">{{ $t('sidebar.categories') }}</h4>
           <div class="grid grid-cols-2 gap-2">
             <router-link
               v-for="cat in quickCats"
@@ -27,14 +27,14 @@
               :to="{ name: 'Category', params: { id: cat.id } }"
               class="text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
             >
-              {{ cat.name }}
+              {{ isZh ? cat.name : cat.nameEn }}
             </router-link>
           </div>
         </div>
 
         <!-- Friendly links -->
         <div>
-          <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">友情链接</h4>
+          <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">{{ $t('footer.links') }}</h4>
           <div class="space-y-3">
             <a
               href="https://aijiuming.com"
@@ -49,7 +49,7 @@
               </div>
               <div>
                 <p class="text-sm font-medium text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">aijiuming.com</p>
-                <p class="text-xs text-gray-400 dark:text-gray-500">个人主页</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500">{{ isZh ? '博客' : 'Blog' }}</p>
               </div>
             </a>
             <a
@@ -65,7 +65,7 @@
               </div>
               <div>
                 <p class="text-sm font-medium text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">aijiuming.cn</p>
-                <p class="text-xs text-gray-400 dark:text-gray-500">在线工具站</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500">{{ isZh ? '工具' : 'Tools' }}</p>
               </div>
             </a>
           </div>
@@ -74,12 +74,12 @@
 
       <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p class="text-sm text-gray-400 dark:text-gray-500">
-          © 2025 AI 导航 · 发现AI世界的无限可能
+          {{ $t('footer.copyright') }} {{ $t('home.hero.title') }}
         </p>
         <div class="flex items-center gap-4 text-sm text-gray-400 dark:text-gray-500">
-          <span>收录 600+ AI 工具</span>
+          <span>{{ isZh ? '600+ AI 工具' : '600+ AI Tools' }}</span>
           <span>·</span>
-          <span>18+ 分类</span>
+          <span>{{ isZh ? '18+ 分类' : '18+ Categories' }}</span>
           <span>·</span>
           <a href="https://aijiuming.com" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">aijiuming.com</a>
         </div>
@@ -89,7 +89,12 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { categories } from '../data/tools.js'
+
+const { locale } = useI18n()
+const isZh = computed(() => locale.value === 'zh-CN')
 
 const quickCats = categories.slice(0, 12)
 </script>

@@ -15,7 +15,7 @@
   >
     <!-- Sidebar header for mobile -->
     <div class="lg:hidden flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
-      <span class="font-semibold text-gray-800 dark:text-white">工具分类</span>
+      <span class="font-semibold text-gray-800 dark:text-white">{{ $t('sidebar.categories') }}</span>
       <button @click="$emit('close')" class="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -26,7 +26,7 @@
     <!-- Nav list -->
     <nav class="flex-1 overflow-y-auto py-3 px-3">
       <div class="mb-2">
-        <p class="px-3 py-1 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">工具分类</p>
+        <p class="px-3 py-1 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">{{ $t('sidebar.categories') }}</p>
       </div>
       
       <div v-for="cat in categories" :key="cat.id">
@@ -39,7 +39,7 @@
           @click="$emit('close')"
         >
           <span class="text-base">{{ cat.emoji }}</span>
-          <span class="text-gray-700 dark:text-gray-300">{{ cat.name }}</span>
+          <span class="text-gray-700 dark:text-gray-300">{{ isZh ? cat.name : cat.nameEn }}</span>
           <span class="ml-auto text-xs text-gray-400 dark:text-gray-500">{{ toolCount(cat.id) }}</span>
         </router-link>
 
@@ -51,7 +51,7 @@
             @click="toggleExpand(cat.id)"
           >
             <span class="text-base">{{ cat.emoji }}</span>
-            <span class="text-gray-700 dark:text-gray-300">{{ cat.name }}</span>
+            <span class="text-gray-700 dark:text-gray-300">{{ isZh ? cat.name : cat.nameEn }}</span>
             <svg
               class="w-4 h-4 ml-auto text-gray-400 transition-transform duration-200"
               :class="expanded.includes(cat.id) ? 'rotate-90' : ''"
@@ -75,7 +75,7 @@
               @click="$emit('close')"
             >
               <span class="w-1.5 h-1.5 rounded-full bg-current opacity-50"></span>
-              <span class="text-gray-600 dark:text-gray-400">{{ child.name }}</span>
+              <span class="text-gray-600 dark:text-gray-400">{{ isZh ? child.name : child.nameEn }}</span>
               <span class="ml-auto text-xs text-gray-400 dark:text-gray-500">{{ toolCount(child.id) }}</span>
             </router-link>
           </div>
@@ -85,7 +85,7 @@
 
     <!-- Sidebar footer - friendly links -->
     <div class="border-t border-gray-100 dark:border-gray-800 p-4 space-y-2">
-      <p class="text-xs text-gray-400 dark:text-gray-500 font-medium mb-2">友情链接</p>
+      <p class="text-xs text-gray-400 dark:text-gray-500 font-medium mb-2">{{ $t('footer.links') }}</p>
       <a
         href="https://aijiuming.com"
         target="_blank"
@@ -97,7 +97,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
         </div>
-        <span class="group-hover:underline">aijiuming.com 个人主页</span>
+        <span class="group-hover:underline">aijiuming.com</span>
       </a>
       <a
         href="https://aijiuming.cn"
@@ -110,7 +110,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
         </div>
-        <span class="group-hover:underline">aijiuming.cn 在线工具</span>
+        <span class="group-hover:underline">aijiuming.cn</span>
       </a>
     </div>
   </aside>
@@ -119,6 +119,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { categories, tools } from '../data/tools.js'
 
 const props = defineProps({
@@ -128,9 +129,14 @@ const props = defineProps({
 defineEmits(['close'])
 
 const route = useRoute()
+const { locale } = useI18n()
+
 const expanded = ref(['office', 'image'])
 
 const activeId = computed(() => route.params.id || '')
+
+// 判断是否为中文
+const isZh = computed(() => locale.value === 'zh-CN')
 
 function isParentActive(cat) {
   if (!cat.children) return false
